@@ -75,27 +75,30 @@ function drawGrid(){
 }
 
 var gridData;
-var matrix = [];
+// var matrix = [];
 
-function calculateMatrix(gridData, shapeData){
-	if(matrix.length === 0){
-		// building matrix
-		for (let i = 0; i < gridData.numVerticalBlocks; i++){
-			let row = [];
-			for(let j = 0; j < gridData.numHorizontalBlocks; j++){
-				row.push(0);
-			}
-			matrix.push(row);
-		}
-	}
+// function calculateMatrix(gridData, shapeData){
+// 	if(matrix.length === 0){
+// 		// building matrix
+// 		for (let i = 0; i < gridData.numVerticalBlocks; i++){
+// 			let row = [];
+// 			for(let j = 0; j < gridData.numHorizontalBlocks; j++){
+// 				row.push(0);
+// 			}
+// 			matrix.push(row);
+// 		}
+// 	}
 
-}
+// }
 
 function render(){
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gridData = drawGrid();
 	// calculateMatrix(gridData);
 	let shapeO = new ShapeO(gl, canvas, buffer, program, gridData);
+	let translateX = (gridData.numHorizontalBlocks / 2 - 1)  * gridData.blockWidthNormalized;
+	let translateY = (gridData.numVerticalBlocks / 2 - 1) * gridData.blockHeightNormalized;
+	shapeO.translate(translateX, translateY);
 	shapeO.drawShape();
 	window.requestAnimationFrame(render);
 }
@@ -122,7 +125,7 @@ export function setBufferAndAttrib(gl, program, buffer,  dataSource, attribName)
 	}
 }
 
-function setColorUniform(gl, program, colorData){
+export function setColorUniform(gl, program, colorData){
 	var uniform = gl.getUniformLocation(program, "u_color");
 	gl.uniform4f(uniform, colorData[0], colorData[1], colorData[2], colorData[3]);
 }
