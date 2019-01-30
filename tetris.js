@@ -1,5 +1,5 @@
 import {initShaders} from "./Common/initShaders.js";
-import {ShapeO} from "./shape.js";
+import {setBufferAndAttrib, setColorUniform, pickAShape} from "./helpers.js";
 
 var canvas;
 var gl;
@@ -58,7 +58,7 @@ function drawGrid(){
 		normalization: false
 	};
 
-	setBufferAndAttrib(gl, program, buffer, gridDrawData, "a_position");
+	buffer = setBufferAndAttrib(gl, program, buffer, gridDrawData, "a_position");
 	let grey = 0.8;
 	setColorUniform(gl, program, [grey, grey, grey, 1.0]);
 	gl.drawArrays(gl.LINES, 0, (numHorizontalBlocks + numVerticalBlocks + 2)*2);
@@ -75,57 +75,57 @@ function drawGrid(){
 }
 
 var gridData;
-// var matrix = [];
+var matrix = [];
+var past = 0;
+var shape;
+var inactiveBlocks = [];
 
-// function calculateMatrix(gridData, shapeData){
-// 	if(matrix.length === 0){
-// 		// building matrix
-// 		for (let i = 0; i < gridData.numVerticalBlocks; i++){
-// 			let row = [];
-// 			for(let j = 0; j < gridData.numHorizontalBlocks; j++){
-// 				row.push(0);
-// 			}
-// 			matrix.push(row);
-// 		}
-// 	}
-
-// }
-
-function render(){
+function render(now){
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gridData = drawGrid();
-	// calculateMatrix(gridData);
-	let shapeO = new ShapeO(gl, canvas, buffer, program, gridData);
-	let translateX = (gridData.numHorizontalBlocks / 2 - 1)  * gridData.blockWidthNormalized;
-	let translateY = (gridData.numVerticalBlocks / 2 - 1) * gridData.blockHeightNormalized;
-	shapeO.translate(translateX, translateY);
-	shapeO.drawShape();
+	if (!shape){
+		shape = pickAShape(gl, canvas, buffer, program, gridData);		
+	}
+	calculateMatrix(now);
+	inactiveBlocks.forEach(block => {
+		block.drawBlock(gl, buffer, program);
+	});
+	shape.drawShape();
 	window.requestAnimationFrame(render);
 }
 
-// const dataTemplate = {
-//     rawData: any,
-//     numOfComponents: any,
-//     dataType: any, 
-//     normalization: boolean
-// }
-
-export function setBufferAndAttrib(gl, program, buffer,  dataSource, attribName){
-	if(!buffer){
-		buffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		gl.bufferData(gl.ARRAY_BUFFER, dataSource.rawData, gl.STATIC_DRAW);
-		let attrib = gl.getAttribLocation(program, attribName);
-		gl.vertexAttribPointer(attrib, dataSource.numOfComponents, dataSource.dataType, dataSource.normalization, 0, 0);
-		gl.enableVertexAttribArray(attrib);
-	} else {
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, dataSource.rawData);
-		let attrib = gl.getAttribLocation(program, attribName);
-		gl.vertexAttribPointer(attrib, dataSource.numOfComponents, dataSource.dataType, dataSource.normalization, 0, 0);
+function calculateMatrix(now){
+	if(matrix.length === 0){
+		// building matrix
+		for (let i = 0; i < gridData.numVerticalBlocks; i++){
+			let row = [];
+			for(let j = 0; j < gridData.numHorizontalBlocks; j++){
+				row.push(0);
+			}
+			matrix.push(row);
+		}
 	}
-}
 
-export function setColorUniform(gl, program, colorData){
-	var uniform = gl.getUniformLocation(program, "u_color");
-	gl.uniform4f(uniform, colorData[0], colorData[1], colorData[2], colorData[3]);
+	let activeBlocksCoor = shape.getBlockCoordinatesArray();
+	let collide = false;
+	for(let i = 0; i< activeBlocksCoor.length; i++){
+		let blockCoor = activeBlocksCoor[i];
+		if (blockCoor.y === 0 || matrix[blockCoor.y-1][blockCoor.x] === 1){
+			collide = true;
+			break;
+		}
+	}
+
+	if(now - past >= 700){
+		if(!collide){
+			shape.translate(0, -gridData.blockHeightNormalized);
+		} else {
+			activeBlocksCoor.forEach(blockCoor => {
+				matrix[blockCoor.y][blockCoor.x] = 1;
+			});
+			inactiveBlocks = inactiveBlocks.concat(shape.blockArray);
+			shape = pickAShape(gl, canvas, buffer, program, gridData);
+		}
+		past = now;
+	}
 }
