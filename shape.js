@@ -53,10 +53,6 @@ class Shape{
 export class ShapeO extends Shape{
 	constructor(gl, canvas, buffer, program, gridData, color){
 		super(gl, canvas, buffer, program, gridData, color);
-		this.matrix = [
-			[1, 1],
-			[1, 1]
-		];
 		let blockWidth = gridData.blockWidthNormalized;
 		let blockHeight = gridData.blockHeightNormalized;
 		

@@ -6,6 +6,7 @@ var gl;
 var buffer;
 var program;
 const gridElementSize = 50; //px
+const interval = 700; // ms ; the lower the value the faster the blocks move
 
 window.onload = function init(){
 	canvas = document.getElementById("gl-canvas");
@@ -86,7 +87,7 @@ function render(now){
 	if (!shape){
 		shape = pickAShape(gl, canvas, buffer, program, gridData);		
 	}
-	calculateMatrix(now);
+	collisionCheck(now);
 	inactiveBlocks.forEach(block => {
 		block.drawBlock(gl, buffer, program);
 	});
@@ -94,7 +95,7 @@ function render(now){
 	window.requestAnimationFrame(render);
 }
 
-function calculateMatrix(now){
+function collisionCheck(now){
 	if(matrix.length === 0){
 		// building matrix
 		for (let i = 0; i < gridData.numVerticalBlocks; i++){
@@ -106,7 +107,7 @@ function calculateMatrix(now){
 		}
 	}
 
-	let activeBlocksCoor = shape.getBlockCoordinatesArray();
+	let activeBlocksCoor = shape.getBlockCoordinatesArray();	// getting coordinates of each block
 	let collide = false;
 	for(let i = 0; i< activeBlocksCoor.length; i++){
 		let blockCoor = activeBlocksCoor[i];
@@ -116,15 +117,17 @@ function calculateMatrix(now){
 		}
 	}
 
-	if(now - past >= 700){
+	if(now - past >= interval){
 		if(!collide){
+			// if not collide then keep going down by 1 block
 			shape.translate(0, -gridData.blockHeightNormalized);
 		} else {
+			// if collide then save each block into matrix and add them to inactive blocks
 			activeBlocksCoor.forEach(blockCoor => {
 				matrix[blockCoor.y][blockCoor.x] = 1;
 			});
 			inactiveBlocks = inactiveBlocks.concat(shape.blockArray);
-			shape = pickAShape(gl, canvas, buffer, program, gridData);
+			shape = pickAShape(gl, canvas, buffer, program, gridData);	// then pick a new shape
 		}
 		past = now;
 	}
