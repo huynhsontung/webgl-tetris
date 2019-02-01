@@ -82,7 +82,7 @@ function rotate(){
 		let translateX = shape.x + localX * gridData.blockWidthNormalized;
 		let translateY = shape.y + localY * gridData.blockHeightNormalized;
 		block.setPosition(translateX, translateY);
-		let blockCoor = block.getBlockCoordinates(gridData);
+		let blockCoor = block.getBlockCoordinates();
 		if(blockCoor.x < 0 || blockCoor.x >= gridData.numHorizontalBlocks || blockCoor.y < 0){
 			collide = true;
 			return;

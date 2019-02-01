@@ -91,7 +91,7 @@ function render(now){
 	}
 	collisionCheck(now);
 	inactiveBlocks.forEach(block => {
-		block.drawBlock(gl, buffer, program);
+		block.drawBlock();
 	});
 	shape.drawShape();
 	if(finish){

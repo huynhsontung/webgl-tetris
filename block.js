@@ -1,5 +1,5 @@
 import {setBufferAndAttrib, setColorUniform} from "./helpers.js";
-import {gl} from "./tetris.js";
+import {gl, gridData} from "./tetris.js";
 
 export class Block{
 	constructor(blockWidth, blockHeight, color){
@@ -94,7 +94,7 @@ export class Block{
 		this.y = y;
 	}
 	
-	getBlockCoordinates(gridData){
+	getBlockCoordinates(){
 		let middleX = gridData.numHorizontalBlocks / 2;
 		let middleY = gridData.numVerticalBlocks / 2;
 		let coorX = this.x / gridData.blockWidthNormalized;

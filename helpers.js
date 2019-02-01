@@ -1,5 +1,5 @@
 import {ShapeO} from "./shape.js";
-import {gl, canvas, buffer, program, gridData} from "./tetris.js";
+import {gl, buffer, program, gridData} from "./tetris.js";
 // const dataTemplate = {
 //     rawData: any,
 //     numOfComponents: any,
@@ -32,7 +32,7 @@ export function pickAShape(){
 	let shape;
 	switch(Math.floor(Math.random() * Math.floor(7))){
 	default: 
-		shape = new ShapeO(gl, canvas, buffer, program, gridData, [0.4,0.2,0.6,1]);
+		shape = new ShapeO([0.4,0.2,0.6,1]);
 	}
 	let translateY = (gridData.numVerticalBlocks / 2) * gridData.blockHeightNormalized;
 	shape.translate(0, translateY);
