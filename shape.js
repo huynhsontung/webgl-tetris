@@ -44,10 +44,6 @@ class Shape{
 		});
 		return blockCoorArray;
 	}
-
-	get getBlockArray(){
-		return this.blockArray;
-	}
 }
 
 export class ShapeO extends Shape{

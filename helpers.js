@@ -1,4 +1,5 @@
 import {ShapeO} from "./shape.js";
+import {gl, canvas, buffer, program, gridData} from "./tetris.js";
 // const dataTemplate = {
 //     rawData: any,
 //     numOfComponents: any,
@@ -6,9 +7,9 @@ import {ShapeO} from "./shape.js";
 //     normalization: boolean
 // }
 
-export function setBufferAndAttrib(gl, program, buffer,  dataSource, attribName){
+export function setBufferAndAttrib(dataSource, attribName){
 	if(!buffer){
-		buffer = gl.createBuffer();
+		let buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.bufferData(gl.ARRAY_BUFFER, dataSource.rawData, gl.STATIC_DRAW);
 		let attrib = gl.getAttribLocation(program, attribName);
@@ -22,12 +23,12 @@ export function setBufferAndAttrib(gl, program, buffer,  dataSource, attribName)
 	return buffer;
 }
 
-export function setColorUniform(gl, program, colorData){
+export function setColorUniform(colorData){
 	var uniform = gl.getUniformLocation(program, "u_color");
 	gl.uniform4f(uniform, colorData[0], colorData[1], colorData[2], colorData[3]);
 }
 
-export function pickAShape(gl, canvas, buffer, program, gridData){
+export function pickAShape(){
 	let shape;
 	switch(Math.floor(Math.random() * Math.floor(7))){
 	default: 

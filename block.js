@@ -1,4 +1,5 @@
 import {setBufferAndAttrib, setColorUniform} from "./helpers.js";
+import {gl} from "./tetris.js";
 
 export class Block{
 	constructor(blockWidth, blockHeight, color){
@@ -27,7 +28,7 @@ export class Block{
 		this.outlineVerticies = outlineVerticies;
 	}
 
-	drawBlock(gl, buffer, program){
+	drawBlock(){
 		// draw fill
 		let data = {
 			rawData: new Float32Array(this.verticies),
@@ -35,8 +36,8 @@ export class Block{
 			dataType: gl.FLOAT, 
 			normalization: false
 		};
-		setBufferAndAttrib(gl, program, buffer, data, "a_position");
-		setColorUniform(gl, program, this.color);
+		setBufferAndAttrib(data, "a_position");
+		setColorUniform(this.color);
 		gl.drawArrays(gl.TRIANGLES, 0, this.verticies.length/2);
 
 		// draw outline
@@ -46,24 +47,24 @@ export class Block{
 			dataType: gl.FLOAT, 
 			normalization: false
 		};
-		setBufferAndAttrib(gl, program, buffer, data, "a_position");
+		setBufferAndAttrib(data, "a_position");
 		let grey = 0;
-		setColorUniform(gl, program, [grey,grey,grey,1]);
+		setColorUniform([grey,grey,grey,1]);
 		gl.drawArrays(gl.LINE_LOOP, 0, this.outlineVerticies.length/2);
 	}
 
 	translate(x, y){
-		for(let i= 0; i<12; i+=2){
+		for(let i= 0; i<this.verticies.length; i+=2){
 			this.verticies[i] += x;
 		}
-		for(let i= 1; i<12; i+=2){
+		for(let i= 1; i<this.verticies.length; i+=2){
 			this.verticies[i] += y;
 		}
 
-		for(let i= 0; i<8; i+=2){
+		for(let i= 0; i<this.outlineVerticies.length; i+=2){
 			this.outlineVerticies[i] += x;
 		}
-		for(let i= 1; i<8; i+=2){
+		for(let i= 1; i<this.outlineVerticies.length; i+=2){
 			this.outlineVerticies[i] += y;
 		}
 

@@ -1,10 +1,11 @@
 import {initShaders} from "./Common/initShaders.js";
 import {setBufferAndAttrib, setColorUniform, pickAShape} from "./helpers.js";
+import { controlSwitch } from "./controls.js";
 
-var canvas;
-var gl;
-var buffer;
-var program;
+export var canvas;
+export var gl;
+export var buffer;
+export var program;
 const gridElementSize = 50; //px
 const interval = 700; // ms ; the lower the value the faster the blocks move
 
@@ -13,7 +14,7 @@ window.onload = function init(){
 	gl = canvas.getContext("webgl");
 	gl.clearColor(0,0,0,1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT);
-
+	document.addEventListener("keydown", controlSwitch);
 
 	program = initShaders(gl, "vertex-shader", "fragment-shader");
 	gl.useProgram(program);
@@ -59,9 +60,9 @@ function drawGrid(){
 		normalization: false
 	};
 
-	buffer = setBufferAndAttrib(gl, program, buffer, gridDrawData, "a_position");
+	buffer = setBufferAndAttrib(gridDrawData, "a_position");
 	let grey = 0.8;
-	setColorUniform(gl, program, [grey, grey, grey, 1.0]);
+	setColorUniform([grey, grey, grey, 1.0]);
 	gl.drawArrays(gl.LINES, 0, (numHorizontalBlocks + numVerticalBlocks + 2)*2);
 	return {
 		numHorizontalBlocks,
@@ -75,38 +76,49 @@ function drawGrid(){
 	};
 }
 
-var gridData;
-var matrix = [];
+export var gridData;
+export var matrix = [];
+export var shape;
 var past = 0;
-var shape;
 var inactiveBlocks = [];
+var finish = false;
 
 function render(now){
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gridData = drawGrid();
 	if (!shape){
-		shape = pickAShape(gl, canvas, buffer, program, gridData);		
+		shape = pickAShape();		
 	}
 	collisionCheck(now);
 	inactiveBlocks.forEach(block => {
 		block.drawBlock(gl, buffer, program);
 	});
 	shape.drawShape();
+	if(finish){
+		shape = null;
+		// show overlay
+		return;
+	}
 	window.requestAnimationFrame(render);
+}
+
+function initMatrix(){
+	let matrix = [];
+	// building matrix
+	for (let i = 0; i < gridData.numVerticalBlocks; i++){
+		let row = [];
+		for(let j = 0; j < gridData.numHorizontalBlocks; j++){
+			row.push(0);
+		}
+		matrix.push(row);
+	}
+	return matrix;
 }
 
 function collisionCheck(now){
 	if(matrix.length === 0){
-		// building matrix
-		for (let i = 0; i < gridData.numVerticalBlocks; i++){
-			let row = [];
-			for(let j = 0; j < gridData.numHorizontalBlocks; j++){
-				row.push(0);
-			}
-			matrix.push(row);
-		}
+		matrix = initMatrix();
 	}
-
 	let activeBlocksCoor = shape.getBlockCoordinatesArray();	// getting coordinates of each block
 	let collide = false;
 	for(let i = 0; i< activeBlocksCoor.length; i++){
@@ -124,11 +136,24 @@ function collisionCheck(now){
 		} else {
 			// if collide then save each block into matrix and add them to inactive blocks
 			activeBlocksCoor.forEach(blockCoor => {
-				matrix[blockCoor.y][blockCoor.x] = 1;
+				if(blockCoor.x >= 0 && blockCoor.x < gridData.numHorizontalBlocks &&
+					blockCoor.y >= 0 && blockCoor.y < gridData.numVerticalBlocks)
+					matrix[blockCoor.y][blockCoor.x] = 1;
+				else {
+					finish = true;
+				}
 			});
 			inactiveBlocks = inactiveBlocks.concat(shape.blockArray);
-			shape = pickAShape(gl, canvas, buffer, program, gridData);	// then pick a new shape
+			shape = pickAShape();	// then pick a new shape
 		}
 		past = now;
 	}
+}
+
+export function restartGame(){
+	shape = null;
+	inactiveBlocks = [];
+	matrix = initMatrix();
+	finish = false;
+	window.requestAnimationFrame(render);
 }
