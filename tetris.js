@@ -7,7 +7,7 @@ export var gl;
 export var buffer;
 export var program;
 const gridElementSize = 50; //px
-const interval = 700; // ms ; the lower the value the faster the blocks move
+const interval = 500; // ms ; the lower the value the faster the blocks move
 
 window.onload = function init(){
 	canvas = document.getElementById("gl-canvas");
@@ -90,22 +90,18 @@ function render(now){
 		shape = pickAShape();		
 	}
 	collisionCheck(now);
-	// fullRowCheck();
-	// if(collisionCheck(now)){
-	// 	window.requestAnimationFrame(render);
-	// 	return;
-	// }
+	fullRowCheck();
 	inactiveBlocks.forEach(blockArray => {
 		blockArray.forEach(block => {
 			block.drawBlock();
 		});
 	});
-	shape.drawShape();
 	if(finish){
 		shape = null;
 		// show overlay
 		return;
 	}
+	shape.drawShape();
 	window.requestAnimationFrame(render);
 }
 
@@ -152,20 +148,51 @@ function collisionCheck(now){
 					blockCoor.y >= 0 && blockCoor.y < gridData.numVerticalBlocks){
 					matrix[blockCoor.y][blockCoor.x] = 1;
 					inactiveBlocks[blockCoor.y].push(block);
-				} else {
-					finish = true;
 				}
 			});
-			shape = pickAShape();
+			if(inactiveBlocks[gridData.numVerticalBlocks-1].length > 0){
+				finish = true;
+			} else {
+				shape = pickAShape();
+			}
 		}
 		past = now;
 	}
 	return collide;
 }
 
-// function fullRowCheck(){
-// 	let 
-// }
+function fullRowCheck(){
+	let rowsToRemove = [];
+	matrix.forEach((row, index) => {
+		let wholeLine = true;
+		if (row[0] === 0) {
+			return;
+		} else {
+			for (let i = 1; i < row.length; i++){
+				if (row[i] === 0) {
+					wholeLine = false;
+					break;
+				}
+			}
+			if(wholeLine){
+				rowsToRemove.push(index);
+			}
+		}
+	});
+	rowsToRemove.forEach(rowIndex => {
+		matrix.splice(rowIndex,1);
+		let row = [];
+		for(let j = 0; j < gridData.numHorizontalBlocks; j++){
+			row.push(0);
+		}
+		matrix.push(row);
+		inactiveBlocks.splice(rowIndex,1);
+		for(let i = rowIndex; i < gridData.numVerticalBlocks - 1; i++){
+			inactiveBlocks[i].forEach(block => block.translate(0, -gridData.blockHeightNormalized));
+		}
+		inactiveBlocks.push([]);
+	});
+}
 
 export function restartGame(){
 	shape = null;
