@@ -2,7 +2,9 @@ import {setBufferAndAttrib, setColorUniform} from "./helpers.js";
 import {gl, gridData} from "./tetris.js";
 
 export class Block{
-	constructor(blockWidth, blockHeight, color){
+	constructor(color){
+		let blockWidth = gridData.blockWidthNormalized;
+		let blockHeight = gridData.blockHeightNormalized;
 		this.x = 0;
 		this.y = 0;
 		this.color = color;

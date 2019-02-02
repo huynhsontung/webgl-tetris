@@ -1,4 +1,5 @@
 import {shape, matrix, gridData, restartGame} from "./tetris.js";
+import { Block } from "./block.js";
 
 export function controlSwitch(event){
 	switch (event.code){
@@ -21,7 +22,7 @@ export function controlSwitch(event){
 }
 
 function moveRight(){
-	if (shape == null)
+	if (shape == null || shape.blockArray.length < 4)
 		return;
 	let activeBlocksCoor = shape.getBlockCoordinatesArray();
 	for(let i = 0; i < activeBlocksCoor.length; i++){
@@ -36,7 +37,7 @@ function moveRight(){
 }
 
 function moveLeft(){
-	if (shape == null)
+	if (shape == null || shape.blockArray.length < 4)
 		return;
 	let activeBlocksCoor = shape.getBlockCoordinatesArray();
 	for(let i = 0; i < activeBlocksCoor.length; i++){
@@ -51,7 +52,7 @@ function moveLeft(){
 }
 
 function moveDown(){
-	if (shape == null)
+	if (shape == null || shape.blockArray.length < 4)
 		return;
 	let activeBlocksCoor = shape.getBlockCoordinatesArray();
 	for(let i = 0; i < activeBlocksCoor.length; i++){
@@ -66,11 +67,11 @@ function moveDown(){
 }
 
 function rotate(){
-	if (shape == null)
+	if (shape == null || shape.blockArray.length < 4)
 		return;
-	let blockArrayCopy = shape.blockArray.concat([]);
+	let blockArrayCopy = [];
 	let collide = false;
-	blockArrayCopy.forEach(block => {
+	shape.blockArray.forEach(block => {
 		let localX = (block.x - shape.x) / gridData.blockWidthNormalized;
 		let localY = (block.y - shape.y) / gridData.blockHeightNormalized;
 		let tmp = Math.round(localX*10)/10;
@@ -81,10 +82,15 @@ function rotate(){
 		// localY += gridData.numVerticalBlocks/2;
 		let translateX = shape.x + localX * gridData.blockWidthNormalized;
 		let translateY = shape.y + localY * gridData.blockHeightNormalized;
-		block.setPosition(translateX, translateY);
-		let blockCoor = block.getBlockCoordinates();
+		let blockCopy = new Block(shape.color);
+		blockCopy.translate(block.x, block.y);
+		blockCopy.setPosition(translateX, translateY);
+		let blockCoor = blockCopy.getBlockCoordinates();
+		blockArrayCopy.push(blockCopy);
 		if(blockCoor.x < 0 || blockCoor.x >= gridData.numHorizontalBlocks || blockCoor.y < 0){
 			collide = true;
+			return;
+		} else if(blockCoor.y >= gridData.numVerticalBlocks) {
 			return;
 		} else if (matrix[blockCoor.y][blockCoor.x] === 1){
 			collide = true;

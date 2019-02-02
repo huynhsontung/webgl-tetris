@@ -90,8 +90,15 @@ function render(now){
 		shape = pickAShape();		
 	}
 	collisionCheck(now);
-	inactiveBlocks.forEach(block => {
-		block.drawBlock();
+	// fullRowCheck();
+	// if(collisionCheck(now)){
+	// 	window.requestAnimationFrame(render);
+	// 	return;
+	// }
+	inactiveBlocks.forEach(blockArray => {
+		blockArray.forEach(block => {
+			block.drawBlock();
+		});
 	});
 	shape.drawShape();
 	if(finish){
@@ -103,26 +110,30 @@ function render(now){
 }
 
 function initMatrix(){
-	let matrix = [];
+	matrix = [];
+	inactiveBlocks = [];
 	// building matrix
 	for (let i = 0; i < gridData.numVerticalBlocks; i++){
+		inactiveBlocks.push([]);
 		let row = [];
 		for(let j = 0; j < gridData.numHorizontalBlocks; j++){
 			row.push(0);
 		}
 		matrix.push(row);
 	}
-	return matrix;
 }
 
 function collisionCheck(now){
 	if(matrix.length === 0){
-		matrix = initMatrix();
+		initMatrix();
 	}
 	let activeBlocksCoor = shape.getBlockCoordinatesArray();	// getting coordinates of each block
 	let collide = false;
 	for(let i = 0; i< activeBlocksCoor.length; i++){
 		let blockCoor = activeBlocksCoor[i];
+		if (blockCoor.y > gridData.numVerticalBlocks){
+			continue;
+		}
 		if (blockCoor.y === 0 || matrix[blockCoor.y-1][blockCoor.x] === 1){
 			collide = true;
 			break;
@@ -135,25 +146,30 @@ function collisionCheck(now){
 			shape.translate(0, -gridData.blockHeightNormalized);
 		} else {
 			// if collide then save each block into matrix and add them to inactive blocks
-			activeBlocksCoor.forEach(blockCoor => {
+			shape.blockArray.forEach(block => {
+				let blockCoor = block.getBlockCoordinates();
 				if(blockCoor.x >= 0 && blockCoor.x < gridData.numHorizontalBlocks &&
-					blockCoor.y >= 0 && blockCoor.y < gridData.numVerticalBlocks)
+					blockCoor.y >= 0 && blockCoor.y < gridData.numVerticalBlocks){
 					matrix[blockCoor.y][blockCoor.x] = 1;
-				else {
+					inactiveBlocks[blockCoor.y].push(block);
+				} else {
 					finish = true;
 				}
 			});
-			inactiveBlocks = inactiveBlocks.concat(shape.blockArray);
-			shape = pickAShape();	// then pick a new shape
+			shape = pickAShape();
 		}
 		past = now;
 	}
+	return collide;
 }
+
+// function fullRowCheck(){
+// 	let 
+// }
 
 export function restartGame(){
 	shape = null;
-	inactiveBlocks = [];
-	matrix = initMatrix();
+	initMatrix();
 	finish = false;
 	window.requestAnimationFrame(render);
 }
