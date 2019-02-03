@@ -1,4 +1,4 @@
-import {shape, matrix, gridData, restartGame} from "./tetris.js";
+import {shape, matrix, gridData, restartGame, pauseGame} from "./tetris.js";
 import { Block } from "./block.js";
 
 export function controlSwitch(event){
@@ -16,7 +16,10 @@ export function controlSwitch(event){
 		rotate();
 		break;
 	case "KeyR":
-		restart();
+		restartGame();
+		break;
+	case "KeyP":
+		pauseGame();
 		break;
 	}
 }
@@ -100,8 +103,4 @@ function rotate(){
 	if (!collide){
 		shape.blockArray = blockArrayCopy;
 	}
-}
-
-function restart(){
-	restartGame();
 }

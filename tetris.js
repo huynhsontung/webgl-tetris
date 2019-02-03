@@ -6,6 +6,9 @@ export var canvas;
 export var gl;
 export var buffer;
 export var program;
+var requestAnimation;
+var score = 0;
+const scoreStep = 100;
 const gridElementSize = 50; //px
 const interval = 500; // ms ; the lower the value the faster the blocks move
 
@@ -99,10 +102,10 @@ function render(now){
 	if(finish){
 		shape = null;
 		// show overlay
-		return;
+		window.cancelAnimationFrame(requestAnimation);
 	}
 	shape.drawShape();
-	window.requestAnimationFrame(render);
+	requestAnimation = window.requestAnimationFrame(render);
 }
 
 function initMatrix(){
@@ -191,12 +194,28 @@ function fullRowCheck(){
 			inactiveBlocks[i].forEach(block => block.translate(0, -gridData.blockHeightNormalized));
 		}
 		inactiveBlocks.push([]);
+
+		score += scoreStep;
 	});
 }
 
 export function restartGame(){
+	score = 0;
 	shape = null;
 	initMatrix();
 	finish = false;
 	window.requestAnimationFrame(render);
+}
+
+var isPaused = false;
+export function pauseGame(){
+	if(!isPaused){
+		isPaused = true;
+		document.getElementById("overlay").style.display = "block";
+		window.cancelAnimationFrame(requestAnimation);
+	} else {
+		isPaused = false;
+		document.getElementById("overlay").style.display = "none";
+		requestAnimation = window.requestAnimationFrame(render);
+	}
 }

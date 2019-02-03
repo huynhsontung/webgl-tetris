@@ -8,9 +8,10 @@ import {gl, buffer, program, gridData} from "./tetris.js";
 // }
 
 export function setBufferAndAttrib(dataSource, attribName){
+	let newBuffer = buffer;
 	if(!buffer){
-		let buffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		newBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, newBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, dataSource.rawData, gl.STATIC_DRAW);
 		let attrib = gl.getAttribLocation(program, attribName);
 		gl.vertexAttribPointer(attrib, dataSource.numOfComponents, dataSource.dataType, dataSource.normalization, 0, 0);
@@ -20,7 +21,7 @@ export function setBufferAndAttrib(dataSource, attribName){
 		let attrib = gl.getAttribLocation(program, attribName);
 		gl.vertexAttribPointer(attrib, dataSource.numOfComponents, dataSource.dataType, dataSource.normalization, 0, 0);
 	}
-	return buffer;
+	return newBuffer;
 }
 
 export function setColorUniform(colorData){
