@@ -18,7 +18,9 @@
             body {
                 background-color: black;
                 text-align: center;
-                font-size: 18px;
+                font-size: 20pt;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: white;
             }
 
             #overlay {
@@ -33,12 +35,15 @@
             }
 
             #overlay-content{
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 position: relative;
                 top: 25%;
-                font-size: 30pt;
+                font-size: 35pt;
                 text-align: center;
-                color: white;
+            }
+
+            .score-display{
+                margin: 0 auto;
+                width: 40%;
             }
         </style>
         <script type="module" src="./Common/initShaders.js"></script>
@@ -52,5 +57,9 @@
         <canvas id="gl-canvas" width="512" height="1024">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
+        <div class="score-display">
+            <p style="float:left">Score: </p>
+            <p id="score" style="float:right"></p>
+        </div>
     </body>
 </html>

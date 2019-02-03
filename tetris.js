@@ -94,6 +94,7 @@ function render(now){
 	}
 	collisionCheck(now);
 	fullRowCheck();
+	document.getElementById("score").textContent = score;
 	inactiveBlocks.forEach(blockArray => {
 		blockArray.forEach(block => {
 			block.drawBlock();
@@ -103,6 +104,7 @@ function render(now){
 		shape = null;
 		// show overlay
 		window.cancelAnimationFrame(requestAnimation);
+		return;
 	}
 	shape.drawShape();
 	requestAnimation = window.requestAnimationFrame(render);
