@@ -165,25 +165,14 @@ function collisionCheck(now){
 	return collide;
 }
 
-// check if any row needs to be cleared
 function fullRowCheck(){
 	let rowsToRemove = [];
-	matrix.forEach((row, index) => {
-		let wholeLine = true;
-		if (row[0] === 0) {
-			return;
-		} else {
-			for (let i = 1; i < row.length; i++){
-				if (row[i] === 0) {
-					wholeLine = false;
-					break;
-				}
-			}
-			if(wholeLine){
-				rowsToRemove.push(index);
-			}
+	inactiveBlocks.forEach((row, index) => {
+		if (row.length === gridData.numHorizontalBlocks){
+			rowsToRemove.push(index);
 		}
 	});
+
 	rowsToRemove.forEach(rowIndex => {
 		matrix.splice(rowIndex,1);
 		let row = [];
@@ -214,7 +203,7 @@ export function restartGame(){
 	initMatrix();
 	finish = false;
 	document.getElementById("overlay").style.display = "none";
-	window.requestAnimationFrame(render);
+	requestAnimation = window.requestAnimationFrame(render);
 }
 
 var isPaused = false;
