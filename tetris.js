@@ -22,7 +22,7 @@ window.onload = function init(){
 	program = initShaders(gl, "vertex-shader", "fragment-shader");
 	gl.useProgram(program);
 
-	render();
+	requestAnimation = window.requestAnimationFrame(render);
 };
 
 function drawGrid(){
@@ -202,7 +202,9 @@ export function restartGame(){
 	shape = null;
 	initMatrix();
 	finish = false;
+	isPaused = false;
 	document.getElementById("overlay").style.display = "none";
+	window.cancelAnimationFrame(requestAnimation);
 	requestAnimation = window.requestAnimationFrame(render);
 }
 
