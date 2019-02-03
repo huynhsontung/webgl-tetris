@@ -62,7 +62,7 @@ function moveDown(){
 	for(let i = 0; i < activeBlocksCoor.length; i++){
 		if(activeBlocksCoor[i].y <= 0)
 			return;
-		if(activeBlocksCoor[i].y > gridData.numHorizontalBlocks)
+		if(activeBlocksCoor[i].y > gridData.numVerticalBlocks)
 			continue;
 		if(matrix[activeBlocksCoor[i].y - 1][activeBlocksCoor[i].x] ===  1)
 			return;
