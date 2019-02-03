@@ -54,6 +54,7 @@ export function pickAShape(){
 		shape = new ShapeT(teal);
 		break;
 	}
+	// move shape to the top
 	let translateY = (gridData.numVerticalBlocks / 2 + 1) * gridData.blockHeightNormalized;
 	shape.translate(0, translateY);
 	return shape;

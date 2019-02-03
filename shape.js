@@ -67,9 +67,6 @@ export class ShapeI extends Shape{
 	constructor(color){
 		super(color);
 		let blockWidth = gridData.blockWidthNormalized;
-		// let blockHeight = gridData.blockHeightNormalized;
-
-		
 
 		this.blockArray = [
 			new Block(this.color),
@@ -83,7 +80,6 @@ export class ShapeI extends Shape{
 		this.blockArray[2].translate(0, 0);
 		this.blockArray[3].translate(blockWidth, 0);
 
-		
 	}
 }
 
@@ -92,8 +88,6 @@ export class ShapeS extends Shape{
 		super(color);
 		let blockWidth = gridData.blockWidthNormalized;
 		let blockHeight = gridData.blockHeightNormalized;
-
-		
 
 		this.blockArray = [
 			new Block(this.color),
@@ -106,8 +100,6 @@ export class ShapeS extends Shape{
 		this.blockArray[1].translate(blockWidth, 0);
 		this.blockArray[2].translate(0, -blockHeight);
 		this.blockArray[3].translate(-blockWidth, -blockHeight);
-
-		
 	}
 }
 
@@ -116,8 +108,6 @@ export class ShapeZ extends Shape{
 		super(color);
 		let blockWidth = gridData.blockWidthNormalized;
 		let blockHeight = gridData.blockHeightNormalized;
-
-		
 
 		this.blockArray = [
 			new Block(this.color),
@@ -129,9 +119,7 @@ export class ShapeZ extends Shape{
 		this.blockArray[0].translate(-blockWidth, 0);
 		this.blockArray[1].translate(0, 0);
 		this.blockArray[2].translate(0, -blockHeight);
-		this.blockArray[3].translate(blockWidth, -blockHeight);
-
-		
+		this.blockArray[3].translate(blockWidth, -blockHeight);	
 	}
 }
 

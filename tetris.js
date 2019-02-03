@@ -102,7 +102,6 @@ function render(now){
 	});
 	if(finish){
 		shape = null;
-		// show overlay
 		window.cancelAnimationFrame(requestAnimation);
 		return;
 	}
@@ -124,6 +123,7 @@ function initMatrix(){
 	}
 }
 
+// perform collision check with inactive blocks and game boundaries
 function collisionCheck(now){
 	if(matrix.length === 0){
 		initMatrix();
@@ -166,6 +166,7 @@ function collisionCheck(now){
 	return collide;
 }
 
+// check if any row needs to be cleared
 function fullRowCheck(){
 	let rowsToRemove = [];
 	matrix.forEach((row, index) => {

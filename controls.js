@@ -81,8 +81,6 @@ function rotate(){
 		localX = -Math.round(localY*10)/10;
 		localY = tmp;
 		localY += 1;
-		// localX += gridData.numHorizontalBlocks/2;
-		// localY += gridData.numVerticalBlocks/2;
 		let translateX = shape.x + localX * gridData.blockWidthNormalized;
 		let translateY = shape.y + localY * gridData.blockHeightNormalized;
 		let blockCopy = new Block(shape.color);
