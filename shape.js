@@ -14,7 +14,7 @@ import {gridData} from "./tetris.js";
 class Shape{
 	constructor(color){
 		this.color = color || [0.1,0.1,0.1,1];
-
+		this.isRotate = false;
 		this.x = 0;
 		this.y = 0;
 	}
@@ -58,8 +58,7 @@ export class ShapeO extends Shape{
 		this.blockArray[1].translate(0, blockHeight);
 		this.blockArray[2].translate(-blockWidth, 0);
 		this.blockArray[3].translate(0, 0);
-
-		
+	
 	}
 }
 
@@ -100,6 +99,7 @@ export class ShapeS extends Shape{
 		this.blockArray[1].translate(blockWidth, 0);
 		this.blockArray[2].translate(0, -blockHeight);
 		this.blockArray[3].translate(-blockWidth, -blockHeight);
+
 	}
 }
 
@@ -120,6 +120,7 @@ export class ShapeZ extends Shape{
 		this.blockArray[1].translate(0, 0);
 		this.blockArray[2].translate(0, -blockHeight);
 		this.blockArray[3].translate(blockWidth, -blockHeight);	
+
 	}
 }
 

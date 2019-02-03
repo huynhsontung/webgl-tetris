@@ -101,8 +101,7 @@ function render(now){
 		});
 	});
 	if(finish){
-		shape = null;
-		window.cancelAnimationFrame(requestAnimation);
+		gameOver();
 		return;
 	}
 	shape.drawShape();
@@ -202,16 +201,25 @@ function fullRowCheck(){
 	});
 }
 
+function gameOver(){
+	shape = null;
+	document.getElementById("overlay-content").textContent = "Game Over";
+	document.getElementById("overlay").style.display = "block";
+	window.cancelAnimationFrame(requestAnimation);
+}
+
 export function restartGame(){
 	score = 0;
 	shape = null;
 	initMatrix();
 	finish = false;
+	document.getElementById("overlay").style.display = "none";
 	window.requestAnimationFrame(render);
 }
 
 var isPaused = false;
 export function pauseGame(){
+	document.getElementById("overlay-content").textContent = "Paused";
 	if(!isPaused){
 		isPaused = true;
 		document.getElementById("overlay").style.display = "block";

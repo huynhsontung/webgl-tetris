@@ -1,5 +1,6 @@
 import {shape, matrix, gridData, restartGame, pauseGame} from "./tetris.js";
 import { Block } from "./block.js";
+import { ShapeI, ShapeS, ShapeZ, ShapeO } from "./shape.js";
 
 export function controlSwitch(event){
 	switch (event.code){
@@ -74,15 +75,29 @@ function rotate(){
 		return;
 	let blockArrayCopy = [];
 	let collide = false;
+	let isRotate = shape.isRotate;
 	shape.blockArray.forEach(block => {
-		let localX = (block.x - shape.x) / gridData.blockWidthNormalized;
-		let localY = (block.y - shape.y) / gridData.blockHeightNormalized;
-		let tmp = Math.round(localX*10)/10;
-		localX = -Math.round(localY*10)/10;
-		localY = tmp;
-		localY += 1;
-		let translateX = shape.x + localX * gridData.blockWidthNormalized;
-		let translateY = shape.y + localY * gridData.blockHeightNormalized;
+		let offset = 0.5;
+		if (shape instanceof ShapeO){
+			offset = 0;
+		}
+		let localX = (block.x - shape.x) / gridData.blockWidthNormalized - offset;
+		let localY = (block.y - shape.y) / gridData.blockHeightNormalized + offset;
+		if((shape instanceof ShapeS || shape instanceof ShapeI || shape instanceof ShapeZ) && isRotate){
+			let tmp = Math.round(localX*10)/10;
+			localX = Math.round(localY*10)/10;
+			localY = -tmp;
+			localX -= 1;
+			shape.isRotate = false;
+		} else {
+			let tmp = Math.round(localX*10)/10;
+			localX = -Math.round(localY*10)/10;
+			localY = tmp;
+			localY += 1;
+			shape.isRotate = true;
+		}
+		let translateX = shape.x + offset * gridData.blockWidthNormalized + localX * gridData.blockWidthNormalized;
+		let translateY = shape.y - offset * gridData.blockHeightNormalized + localY * gridData.blockHeightNormalized;
 		let blockCopy = new Block(shape.color);
 		blockCopy.translate(block.x, block.y);
 		blockCopy.setPosition(translateX, translateY);
