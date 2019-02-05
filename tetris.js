@@ -93,7 +93,6 @@ function render(now){
 		shape = pickAShape();		
 	}
 	collisionCheck(now);
-	fullRowCheck();
 	document.getElementById("score").textContent = score;
 	inactiveBlocks.forEach(blockArray => {
 		blockArray.forEach(block => {
@@ -159,6 +158,7 @@ function collisionCheck(now){
 			} else {
 				shape = pickAShape();
 			}
+			fullRowCheck();
 		}
 		past = now;
 	}
@@ -173,15 +173,15 @@ function fullRowCheck(){
 		}
 	});
 
-	rowsToRemove.forEach(rowIndex => {
-		matrix.splice(rowIndex,1);
+	rowsToRemove.forEach((rowIndex, index) => {
+		matrix.splice(rowIndex - index,1);
 		let row = [];
 		for(let j = 0; j < gridData.numHorizontalBlocks; j++){
 			row.push(0);
 		}
 		matrix.push(row);
-		inactiveBlocks.splice(rowIndex,1);
-		for(let i = rowIndex; i < gridData.numVerticalBlocks - 1; i++){
+		inactiveBlocks.splice(rowIndex - index,1);
+		for(let i = rowIndex - index; i < gridData.numVerticalBlocks - 1; i++){
 			inactiveBlocks[i].forEach(block => block.translate(0, -gridData.blockHeightNormalized));
 		}
 		inactiveBlocks.push([]);
